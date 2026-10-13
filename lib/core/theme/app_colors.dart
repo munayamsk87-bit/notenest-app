@@ -22,6 +22,15 @@ class AppColors {
   static const Color darkSurface = Color(0xFF242231);
   static const Color darkSurfaceAlt = Color(0xFF2E2B3C);
   static const Color darkTextMain = Color(0xFFF1EEF7);
+
+  // Luxury accents — champagne & gold, used sparingly for a premium feel
+  static const Color pearl = Color(0xFFFFFBF6);
+  static const Color champagne = Color(0xFFE7C98A);
+  static const Color gold = Color(0xFFC9A227);
+  static const Color goldSoft = Color(0xFFF6E7BE);
+  static const Color plum = Color(0xFF3A2E52);
+  static const Color hairline = Color(0x14000000);
+  static const Color goldHairline = Color(0x55C9A227);
 }
 
 /// A selectable note card colour. `default` follows the active theme surface.
@@ -60,7 +69,7 @@ class NoteColors {
 }
 
 /// Pastel theme packs (Spec §2 "Optional pastel theme packs").
-enum ThemePack { classic, lavender, mint, rose, sky }
+enum ThemePack { classic, lavender, mint, rose, sky, champagne }
 
 extension ThemePackX on ThemePack {
   String get label {
@@ -75,6 +84,8 @@ extension ThemePackX on ThemePack {
         return 'Rose';
       case ThemePack.sky:
         return 'Sky';
+      case ThemePack.champagne:
+        return 'Champagne';
     }
   }
 
@@ -90,6 +101,8 @@ extension ThemePackX on ThemePack {
         return const Color(0xFFE0709A);
       case ThemePack.sky:
         return const Color(0xFF5B9BD5);
+      case ThemePack.champagne:
+        return AppColors.gold;
     }
   }
 }

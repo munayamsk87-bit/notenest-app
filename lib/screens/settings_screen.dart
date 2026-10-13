@@ -245,12 +245,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _section(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 22, 16, 6),
-      child: Text(
-        title,
-        style: Theme.of(context)
-            .textTheme
-            .titleSmall
-            ?.copyWith(color: context.scheme.primary, fontWeight: FontWeight.w800),
+      child: Row(
+        children: <Widget>[
+          Container(
+            width: 8,
+            height: 8,
+            decoration: const BoxDecoration(
+              color: AppColors.gold,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: context.scheme.primary,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.3,
+                ),
+          ),
+        ],
       ),
     );
   }

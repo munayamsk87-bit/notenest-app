@@ -100,21 +100,32 @@ class NoteCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 220),
         decoration: BoxDecoration(
-          color: cardColor,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[
+              cardColor,
+              Color.alphaBlend(
+                AppColors.champagne.withOpacity(isDark ? 0.06 : 0.10),
+                cardColor,
+              ),
+            ],
+          ),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: selected
                 ? Theme.of(context).colorScheme.primary
-                : Colors.black.withOpacity(isDark ? 0.22 : 0.05),
+                : (note.isPinned
+                    ? AppColors.goldHairline
+                    : Colors.black.withOpacity(isDark ? 0.22 : 0.05)),
             width: selected ? 2 : 1,
           ),
           boxShadow: <BoxShadow>[
-            if (!isDark)
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
+            BoxShadow(
+              color: AppColors.plum.withOpacity(isDark ? 0.45 : 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
           ],
         ),
         child: Stack(

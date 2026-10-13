@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants/enums.dart';
+import '../core/theme/app_colors.dart';
 import '../core/l10n/context_ext.dart';
 import '../widgets/animated_appear.dart';
 import '../widgets/bouncy_fab.dart';
 import '../widgets/floating_blobs.dart';
 import '../widgets/mascot.dart';
+import '../widgets/premium_banner.dart';
 import '../data/models/attachment.dart';
 import '../data/models/label.dart';
 import '../data/models/note.dart';
@@ -163,12 +166,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: <Widget>[
                       Text(_greeting(context),
                           style: Theme.of(context).textTheme.labelMedium),
-                      Text(
-                        context.t('appName'),
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(fontWeight: FontWeight.w800),
+                      ShaderMask(
+                        shaderCallback: (Rect bounds) => LinearGradient(
+                          colors: <Color>[
+                            Theme.of(context).colorScheme.primary,
+                            AppColors.gold,
+                          ],
+                        ).createShader(bounds),
+                        child: Text(
+                          context.t('appName'),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                              ),
+                        ),
                       ),
                     ],
                   ),
@@ -258,6 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onRefresh: () => notes.refresh(),
               child: CustomScrollView(
                 slivers: <Widget>[
+                  SliverToBoxAdapter(child: _premiumBanner(notes)),
                   SliverToBoxAdapter(child: _searchBar()),
                   SliverToBoxAdapter(child: _filterRow(labels)),
                   if (notes.activeCount == 0 && pinned.isEmpty && unpinned.isEmpty)
@@ -392,6 +407,21 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
       },
+    );
+  }
+
+  Widget _premiumBanner(NotesProvider notes) {
+    return PremiumBanner(
+      title: context.t('appName'),
+      subtitle: context.t('appSubtitle'),
+      stats: <PremiumStat>[
+        PremiumStat(Icons.sticky_note_2_rounded, '${notes.activeCount}',
+            context.t('allNotes')),
+        PremiumStat(Icons.push_pin_rounded,
+            '${notes.pinned(NoteSort.updatedDesc).length}', context.t('pinned')),
+        PremiumStat(Icons.alarm_rounded, '${notes.upcomingReminders.length}',
+            context.t('reminders')),
+      ],
     );
   }
 

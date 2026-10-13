@@ -24,13 +24,25 @@ class AppTheme {
       primary: isDark ? pack.seed.withOpacity(0.92) : pack.seed,
     );
 
-    final Color background = isDark ? AppColors.darkBackground : AppColors.warmCream;
+    final Color background = isDark ? AppColors.darkBackground : AppColors.pearl;
     final Color surface = isDark ? AppColors.darkSurface : Colors.white;
 
     final TextTheme baseText = Typography.material2021().black;
-    final TextTheme textTheme = baseText.apply(
+    final TextTheme applied = baseText.apply(
       bodyColor: isDark ? AppColors.darkTextMain : AppColors.textMain,
       displayColor: isDark ? AppColors.darkTextMain : AppColors.textMain,
+    );
+    // Premium typography: tighter tracking on the larger styles.
+    final TextTheme textTheme = applied.copyWith(
+      displaySmall:
+          applied.displaySmall?.copyWith(letterSpacing: -0.6, fontWeight: FontWeight.w800),
+      headlineMedium: applied.headlineMedium?.copyWith(letterSpacing: -0.4),
+      headlineSmall:
+          applied.headlineSmall?.copyWith(letterSpacing: -0.3, fontWeight: FontWeight.w700),
+      titleLarge: applied.titleLarge?.copyWith(letterSpacing: -0.2),
+      titleMedium: applied.titleMedium?.copyWith(letterSpacing: -0.1),
+      labelLarge:
+          applied.labelLarge?.copyWith(letterSpacing: 0.3, fontWeight: FontWeight.w600),
     );
 
     return ThemeData(
@@ -61,8 +73,8 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         color: surface,
-        elevation: isDark ? 0 : 1.5,
-        shadowColor: Colors.black.withOpacity(isDark ? 0.4 : 0.10),
+        elevation: isDark ? 0 : 2,
+        shadowColor: AppColors.plum.withOpacity(isDark ? 0.5 : 0.12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(cardRadius)),
         margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../core/theme/app_motion.dart';
 
@@ -40,6 +41,7 @@ class _BouncyFabState extends State<BouncyFab>
   Future<void> _handle() async {
     if (_busy) return;
     _busy = true;
+    HapticFeedback.mediumImpact();
     await _controller.forward();
     await widget.onTap();
     if (mounted) {

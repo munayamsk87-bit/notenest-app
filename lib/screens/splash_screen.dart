@@ -9,6 +9,7 @@ import '../providers/settings_provider.dart';
 import '../widgets/floating_blobs.dart';
 import '../widgets/gradient_backdrop.dart';
 import '../widgets/mascot.dart';
+import '../widgets/shimmer_sweep.dart';
 
 /// The opening experience: an animated pastel gradient, rising sparkles and the
 /// NoteNest mascot popping in — then it routes to the home screen (honouring
@@ -118,19 +119,28 @@ class _SplashScreenState extends State<SplashScreen>
                           opacity: v,
                           child: Transform.translate(
                             offset: Offset(0, (1 - v) * 16),
-                            child: Text(
-                              'NoteNest',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 0.6,
+                            child: Column(
+                              children: <Widget>[
+                                ShimmerSweep(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Text(
+                                    'NoteNest',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w800,
+                                          letterSpacing: 0.6,
+                                        ),
                                   ),
+                                ),
+                                const SizedBox(height: 10),
+                                const GoldRule(width: 72),
+                              ],
                             ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         Opacity(
                           opacity: (v * 1.25).clamp(0.0, 1.0),
                           child: Text(

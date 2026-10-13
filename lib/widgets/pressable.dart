@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../core/theme/app_motion.dart';
 
@@ -35,7 +36,12 @@ class _PressableScaleState extends State<PressableScale> {
       onTapDown: widget.onTap == null ? null : (_) => _set(true),
       onTapUp: widget.onTap == null ? null : (_) => _set(false),
       onTapCancel: widget.onTap == null ? null : () => _set(false),
-      onTap: widget.onTap,
+      onTap: widget.onTap == null
+          ? null
+          : () {
+              HapticFeedback.selectionClick();
+              widget.onTap!();
+            },
       onLongPress: widget.onLongPress,
       child: AnimatedScale(
         scale: _down ? widget.scale : 1.0,
