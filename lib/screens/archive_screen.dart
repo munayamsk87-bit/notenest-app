@@ -8,6 +8,7 @@ import '../data/models/label.dart';
 import '../data/models/note.dart';
 import '../providers/labels_provider.dart';
 import '../providers/notes_provider.dart';
+import '../widgets/animated_appear.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/note_actions_sheet.dart';
 import '../widgets/note_card.dart';
@@ -42,17 +43,20 @@ class ArchiveScreen extends StatelessWidget {
                     .whereType<Label>()
                     .toList();
                 final List<Attachment> attachments = notes.attachmentsFor(note.id);
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: NoteCard(
-                    note: note,
-                    done: done,
-                    total: total,
-                    attachments: attachments,
-                    labels: noteLabels,
-                    isGrid: false,
-                    onTap: () => showNoteActionsSheet(context, note),
-                    onLongPress: () => showNoteActionsSheet(context, note),
+                return AnimatedAppear(
+                  index: index,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: NoteCard(
+                      note: note,
+                      done: done,
+                      total: total,
+                      attachments: attachments,
+                      labels: noteLabels,
+                      isGrid: false,
+                      onTap: () => showNoteActionsSheet(context, note),
+                      onLongPress: () => showNoteActionsSheet(context, note),
+                    ),
                   ),
                 );
               },

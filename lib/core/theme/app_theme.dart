@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../widgets/page_transitions.dart';
 import 'app_colors.dart';
 
 /// Centralised theming: light, dark and pastel packs, shared shape + type.
@@ -39,6 +40,16 @@ class AppTheme {
       scaffoldBackgroundColor: background,
       textTheme: textTheme,
       splashFactory: InkSparkle.splashFactory,
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: <TargetPlatform, PageTransitionsBuilder>{
+          TargetPlatform.android: CutePageTransitionsBuilder(),
+          TargetPlatform.fuchsia: CutePageTransitionsBuilder(),
+          TargetPlatform.linux: CutePageTransitionsBuilder(),
+          TargetPlatform.windows: CutePageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0.5,

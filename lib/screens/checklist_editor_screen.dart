@@ -5,11 +5,14 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../core/l10n/context_ext.dart';
+import '../core/theme/app_motion.dart';
 import '../data/models/checklist_item.dart';
 import '../data/models/note.dart';
 import '../providers/notes_provider.dart';
 import '../providers/settings_provider.dart';
+import '../widgets/animated_check.dart';
 import '../widgets/note_actions_sheet.dart';
+import '../widgets/sparkle_burst.dart';
 
 /// Checklist editor: add, edit, reorder, complete and delete items (Spec §4B).
 class ChecklistEditorScreen extends StatefulWidget {
@@ -30,6 +33,7 @@ class _ChecklistEditorScreenState extends State<ChecklistEditorScreen> {
   Timer? _debounce;
   bool _loading = true;
   bool _hydratedTitle = false;
+  bool _celebrated = false;
 
   @override
   void initState() {
@@ -123,6 +127,16 @@ class _ChecklistEditorScreenState extends State<ChecklistEditorScreen> {
       }
     });
     _scheduleSave();
+
+    // A little celebration the first time everything is ticked off.
+    final bool allDone =
+        _rows.isNotEmpty && _rows.every((_Row r) => r.item.isDone);
+    if (allDone && !_celebrated) {
+      _celebrated = true;
+      showSparkleBurst(context);
+    } else if (!allDone) {
+      _celebrated = false;
+    }
   }
 
   void _reorder(int oldIndex, int newIndex) {
@@ -195,10 +209,16 @@ class _ChecklistEditorScreenState extends State<ChecklistEditorScreen> {
                       const SizedBox(height: 6),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(6),
-                        child: LinearProgressIndicator(
-                          value: fraction,
-                          minHeight: 7,
-                          backgroundColor: Colors.black.withOpacity(0.08),
+                        child: TweenAnimationBuilder<double>(
+                          tween: Tween<double>(begin: 0, end: fraction),
+                          duration: AppMotion.medium,
+                          curve: AppMotion.emphasized,
+                          builder: (BuildContext context, double v, Widget? _) =>
+                              LinearProgressIndicator(
+                            value: v,
+                            minHeight: 7,
+                            backgroundColor: Colors.black.withOpacity(0.08),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -223,7 +243,7 @@ class _ChecklistEditorScreenState extends State<ChecklistEditorScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 2),
                         child: Row(
                           children: <Widget>[
-                            Checkbox(
+                            AnimatedCheckbox(
                               value: row.item.isDone,
                               onChanged: (_) => _toggle(row),
                             ),

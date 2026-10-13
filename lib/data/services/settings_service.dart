@@ -42,7 +42,7 @@ class SettingsService {
   // --- Appearance -------------------------------------------------------------
 
   Future<ThemeMode> themeMode() async {
-    final String value = (await _p).getString(_kThemeMode) ?? 'system';
+    final String value = (await _p).getString(_kThemeMode) ?? 'light';
     return ThemeMode.values.firstWhere(
       (ThemeMode m) => m.name == value,
       orElse: () => ThemeMode.system,

@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../core/constants/enums.dart';
 import '../core/l10n/context_ext.dart';
+import '../widgets/animated_appear.dart';
+import '../widgets/bouncy_fab.dart';
+import '../widgets/floating_blobs.dart';
 import '../data/models/attachment.dart';
 import '../data/models/label.dart';
 import '../data/models/note.dart';
@@ -101,12 +104,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
-            _createTile(ctx, Icons.notes_rounded, ctx.t('textNote'), NoteType.text),
-            _createTile(ctx, Icons.checklist_rounded, ctx.t('checklist'), NoteType.checklist),
-            _createTile(ctx, Icons.image_rounded, ctx.t('image'), NoteType.image),
-            _createTile(ctx, Icons.mic_rounded, ctx.t('voice'), NoteType.voice),
-            _createTile(ctx, Icons.brush_rounded, ctx.t('drawing'), NoteType.drawing),
-            _createTile(ctx, Icons.link_rounded, ctx.t('link'), NoteType.link),
+            AnimatedAppear(index: 0, child: _createTile(ctx, Icons.notes_rounded, ctx.t('textNote'), NoteType.text)),
+            AnimatedAppear(index: 1, child: _createTile(ctx, Icons.checklist_rounded, ctx.t('checklist'), NoteType.checklist)),
+            AnimatedAppear(index: 2, child: _createTile(ctx, Icons.image_rounded, ctx.t('image'), NoteType.image)),
+            AnimatedAppear(index: 3, child: _createTile(ctx, Icons.mic_rounded, ctx.t('voice'), NoteType.voice)),
+            AnimatedAppear(index: 4, child: _createTile(ctx, Icons.brush_rounded, ctx.t('drawing'), NoteType.drawing)),
+            AnimatedAppear(index: 5, child: _createTile(ctx, Icons.link_rounded, ctx.t('link'), NoteType.link)),
             const SizedBox(height: 8),
           ],
         ),
@@ -236,12 +239,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _quickCreate,
-        icon: const Icon(Icons.add_rounded),
-        label: Text(context.t('newNote')),
+      floatingActionButton: BouncyFab(
+        onTap: _quickCreate,
+        label: context.t('newNote'),
       ),
-      body: notes.isLoading
+      body: FloatingBlobs(
+        child: notes.isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: () => notes.refresh(),
@@ -298,6 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+      ),
     );
   }
 
@@ -319,8 +323,10 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisExtent: 208,
           ),
           delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) =>
-                _card(notes[index], provider, labels, true),
+            (BuildContext context, int index) => AnimatedAppear(
+              index: index,
+              child: _card(notes[index], provider, labels, true),
+            ),
             childCount: notes.length,
           ),
         ),
@@ -330,11 +336,13 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
-          (BuildContext context, int index) =>
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _card(notes[index], provider, labels, false),
-              ),
+          (BuildContext context, int index) => AnimatedAppear(
+            index: index,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _card(notes[index], provider, labels, false),
+            ),
+          ),
           childCount: notes.length,
         ),
       ),

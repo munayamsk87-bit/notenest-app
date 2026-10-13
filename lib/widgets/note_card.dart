@@ -9,6 +9,7 @@ import '../core/utils/date_utils.dart';
 import '../data/models/attachment.dart';
 import '../data/models/label.dart';
 import '../data/models/note.dart';
+import 'pressable.dart';
 
 /// A rounded note card used in both grid and list layouts (Spec §2/§3).
 class NoteCard extends StatelessWidget {
@@ -93,11 +94,11 @@ class NoteCard extends StatelessWidget {
       ],
     );
 
-    return GestureDetector(
+    return PressableScale(
       onTap: onTap,
       onLongPress: onLongPress,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+        duration: const Duration(milliseconds: 220),
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(22),
