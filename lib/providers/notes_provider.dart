@@ -106,7 +106,6 @@ class NotesProvider extends ChangeNotifier {
       );
 
   List<Note> get upcomingReminders {
-    final DateTime now = DateTime.now();
     return _sorted(
       _notes.where((Note n) =>
           n.hasReminder && !n.isTrashed && !n.isArchived),

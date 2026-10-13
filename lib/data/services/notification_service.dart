@@ -121,6 +121,8 @@ class NotificationService {
         note.preview.isEmpty ? 'Reminder' : note.preview,
         scheduled,
         details,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: exact
             ? AndroidScheduleMode.exactAllowWhileIdle
             : AndroidScheduleMode.inexactAllowWhileIdle,
@@ -136,6 +138,8 @@ class NotificationService {
         note.preview.isEmpty ? 'Reminder' : note.preview,
         scheduled,
         details,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         matchDateTimeComponents: _matchComponents(note.recurrence),
         payload: note.id,

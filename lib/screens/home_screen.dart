@@ -10,7 +10,6 @@ import '../providers/labels_provider.dart';
 import '../providers/notes_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/empty_state.dart';
-import '../widgets/note_actions_sheet.dart';
 import '../widgets/note_card.dart';
 import '../widgets/section_header.dart';
 

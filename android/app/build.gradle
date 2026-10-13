@@ -26,7 +26,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.notenest.notes"
-    compileSdk = 35
+    compileSdk = 36
 
     compileOptions {
         coreLibraryDesugaringEnabled true
@@ -45,7 +45,7 @@ android {
     defaultConfig {
         applicationId = "com.notenest.notes"
         minSdk = 23
-        targetSdk = 34
+        targetSdk = 35
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
         multiDexEnabled true
@@ -69,8 +69,8 @@ android {
             signingConfig = keystorePropertiesFile.exists()
                     ? signingConfigs.release
                     : signingConfigs.debug
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }

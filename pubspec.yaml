@@ -23,7 +23,6 @@ dependencies:
 
   # Utilities
   uuid: ^4.4.2
-  intl: ^0.19.0
   shared_preferences: ^2.3.2
 
   # Reminders / notifications
@@ -33,7 +32,7 @@ dependencies:
 
   # Media & capture
   image_picker: ^1.1.2
-  record: ^5.1.2
+  record: ^6.2.1
   just_audio: ^0.9.40
 
   # Sharing / files / links
@@ -48,7 +47,7 @@ dependencies:
 
   # On-device intelligence
   google_mlkit_text_recognition: ^0.13.0
-  speech_to_text: ^7.0.0
+  speech_to_text: ^7.4.0
 
   # Device security
   local_auth: ^2.3.0
@@ -72,10 +71,3 @@ flutter_launcher_icons:
   adaptive_icon_background: "#FFF9F1"
   adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
   min_sdk_android: 23
-
-dependency_overrides:
-  # record_android 1.5.x targets a much newer AGP (8.12); pin to a build that
-  # works with the Flutter 3.24 toolchain.
-  record_android: 1.3.0
-  # speech_to_text 7.4.x uses flutter.compileSdkVersion (needs newer Flutter).
-  speech_to_text: 7.0.0

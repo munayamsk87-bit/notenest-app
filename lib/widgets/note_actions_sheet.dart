@@ -200,7 +200,7 @@ Future<String> _asPlainText(BuildContext context, Note note) async {
 
 Future<void> _share(BuildContext context, Note note) async {
   final String text = await _asPlainText(context, note);
-  await SharePlus.instance.share(ShareParams(text: text, subject: note.displayTitle));
+  await Share.share(text, subject: note.displayTitle);
 }
 
 Future<void> _exportFile(BuildContext context, Note note) async {
@@ -214,7 +214,8 @@ Future<void> _exportFile(BuildContext context, Note note) async {
       dir.path, '${safeName.isEmpty ? 'note' : safeName}.txt');
   final File file = File(path);
   await file.writeAsString(text);
-  await SharePlus.instance.share(
-    ShareParams(files: <XFile>[XFile(path)], subject: note.displayTitle),
+  await Share.shareXFiles(
+    <XFile>[XFile(path)],
+    subject: note.displayTitle,
   );
 }

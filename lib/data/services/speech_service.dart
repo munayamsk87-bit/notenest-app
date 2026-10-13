@@ -27,7 +27,7 @@ class SpeechService {
   }) async {
     if (!await init()) return false;
     await _speech.listen(
-      onResult: (SpeechRecognitionResult result) =>
+      onResult: (result) =>
           onResult(result.recognizedWords, result.finalResult),
       listenOptions: SpeechListenOptions(partialResults: true),
     );

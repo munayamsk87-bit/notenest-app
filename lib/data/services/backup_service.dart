@@ -8,7 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../db/database_helper.dart';
-import '../models/attachment.dart';
+import '../../core/constants/enums.dart';
 import '../models/checklist_item.dart';
 import '../models/label.dart';
 import '../models/note.dart';

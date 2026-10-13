@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/constants/enums.dart';
 import '../core/l10n/context_ext.dart';
 import '../data/models/attachment.dart';
 import '../data/models/label.dart';

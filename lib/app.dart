@@ -52,7 +52,7 @@ class _NoteNestAppState extends State<NoteNestApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: <SingleChildWidget>[
+      providers: [
         ChangeNotifierProvider<SettingsProvider>(
           create: (_) => SettingsProvider(SettingsService.instance)..load(),
         ),

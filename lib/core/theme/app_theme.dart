@@ -48,7 +48,7 @@ class AppTheme {
         systemOverlayStyle: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         titleTextStyle: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: surface,
         elevation: isDark ? 0 : 1.5,
         shadowColor: Colors.black.withOpacity(isDark ? 0.4 : 0.10),
@@ -108,7 +108,7 @@ class AppTheme {
           borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
         ),
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(cardRadius)),
       ),
       listTileTheme: const ListTileThemeData(

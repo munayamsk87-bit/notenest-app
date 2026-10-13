@@ -1,6 +1,5 @@
 import 'package:sqflite/sqflite.dart';
 
-import '../../core/constants/enums.dart';
 import '../db/database_helper.dart';
 import '../models/attachment.dart';
 import '../models/checklist_item.dart';
