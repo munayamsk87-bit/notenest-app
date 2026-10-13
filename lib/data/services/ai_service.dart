@@ -63,6 +63,61 @@ class AiService {
         .toList();
   }
 
+  Future<String> translate(String text, String language) => _complete(
+      'Translate the following note into $language. Return only the translation, '
+      'keeping the meaning, tone and any formatting:\n\n$text');
+
+  Future<String> fixGrammar(String text) => _complete(
+      'Fix the grammar, spelling and punctuation of the following note. Keep the '
+      'meaning and keep it in the same language. Return only the corrected text:\n\n$text');
+
+  Future<String> changeTone(String text, String tone) => _complete(
+      'Rewrite the following note in a $tone tone, keeping its meaning. Return only '
+      'the rewritten text:\n\n$text');
+
+  Future<String> shorten(String text) => _complete(
+      'Make the following note more concise without losing important details. '
+      'Return only the shortened text:\n\n$text');
+
+  Future<String> expand(String text) => _complete(
+      'Expand the following note with useful detail, keeping its meaning and style. '
+      'Return only the expanded text:\n\n$text');
+
+  Future<String> continueWriting(String text) => _complete(
+      'Continue writing the following note naturally, in the same voice. Return only '
+      'the continuation — do not repeat the original:\n\n$text');
+
+  Future<String> keyPoints(String text) => _complete(
+      'Extract the key points from the following note as a short bulleted list. '
+      'Return only the list:\n\n$text');
+
+  Future<String> suggestTitle(String text) => _complete(
+      'Suggest one short, clear title (at most 6 words) for the following note. '
+      'Return only the title, without quotes or full stops:\n\n$text');
+
+  /// Suggests up to three short labels, preferring the user's existing ones.
+  Future<List<String>> suggestLabels(String text, List<String> existing) async {
+    final String existingList =
+        existing.isEmpty ? '(none yet)' : existing.join(', ');
+    final String raw = await _complete(
+      'Suggest up to 3 short labels (1-2 words each) for the following note. '
+      'Prefer reusing these existing labels when they fit: $existingList. '
+      'Return only the labels, separated by commas, with no numbering:\n\n$text',
+    );
+    return raw
+        .split(RegExp(r'[,\n]'))
+        .map((String s) => s.replaceFirst(RegExp(r'^[\-\*\d\.\)\s]+'), '').trim())
+        .where((String s) => s.isNotEmpty)
+        .take(3)
+        .toList();
+  }
+
+  /// Answers a free-form question, using the note as context.
+  Future<String> ask(String question, String context) => _complete(
+      'You are helping with a personal note. Answer the question, using the note '
+      'below when relevant. Be concise and friendly.\n\nNote:\n$context\n\n'
+      'Question: $question');
+
   /// Sends a tiny request so the user can verify their key and endpoint before
   /// relying on AI features. Returns a precise, human-readable result.
   Future<AiTestResult> testConnection() async {

@@ -13,12 +13,15 @@ import '../core/l10n/context_ext.dart';
 import '../core/theme/app_colors.dart';
 import '../core/utils/validators.dart';
 import '../data/models/attachment.dart';
+import '../data/models/checklist_item.dart';
 import '../data/models/label.dart';
 import '../data/models/note.dart';
 import '../data/services/ai_service.dart';
 import '../data/services/file_storage_service.dart';
 import '../providers/labels_provider.dart';
 import '../providers/notes_provider.dart';
+import '../widgets/ai_actions_sheet.dart';
+import '../widgets/ai_result_sheet.dart';
 import '../widgets/label_picker_sheet.dart';
 import '../widgets/note_actions_sheet.dart';
 import '../widgets/note_color_picker.dart';
@@ -153,7 +156,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
         .pushReplacementNamed('/checklist', arguments: note.id);
   }
 
-  Future<void> _runAi(Note note, String action) async {
+  Future<void> _openAiTools(Note note) async {
     final AiService ai = AiService.instance;
     if (!await ai.isConfigured) {
       if (mounted) {
@@ -166,29 +169,61 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
       }
       return;
     }
+    if (!mounted) return;
+    final AiActionChoice? choice = await showAiActionsSheet(context);
+    if (choice == null || !mounted) return;
+    if (choice.kind == AiActionKind.ask) {
+      await Navigator.of(context).pushNamed('/ai-ask', arguments: note.id);
+      return;
+    }
+    await _runAiChoice(note, choice);
+  }
+
+  Future<void> _runAiChoice(Note note, AiActionChoice choice) async {
+    final AiService ai = AiService.instance;
     final String source = '${_titleController.text}\n${_bodyController.text}'.trim();
-    if (source.isEmpty) return;
+    if (source.isEmpty) {
+      context.showSnack(context.t('aiNoText'));
+      return;
+    }
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
     try {
-      String result;
-      switch (action) {
-        case 'summarize':
-          result = await ai.summarize(source);
-          break;
-        case 'rewrite':
-          result = await ai.rewrite(source);
-          break;
-        default:
+      switch (choice.kind) {
+        case AiActionKind.suggestTitle:
+          final String title = await ai.suggestTitle(source);
+          if (!mounted) return;
+          Navigator.of(context).pop();
+          await _applySuggestedTitle(note, title);
+          return;
+        case AiActionKind.labels:
+          final List<String> existing = context
+              .read<LabelsProvider>()
+              .items
+              .map((Label l) => l.name)
+              .toList();
+          final List<String> names = await ai.suggestLabels(source, existing);
+          if (!mounted) return;
+          Navigator.of(context).pop();
+          await _applySuggestedLabels(note, names);
+          return;
+        case AiActionKind.checklist:
           final List<String> items = await ai.generateChecklist(source);
-          result = items.map((String i) => '• $i').join('\n');
+          if (!mounted) return;
+          Navigator.of(context).pop();
+          await _createChecklistFromResult(note, items.join('\n'));
+          return;
+        default:
+          break;
       }
+
+      final String result = await _produce(ai, choice, source);
       if (!mounted) return;
       Navigator.of(context).pop();
-      await _showAiResult(note, result);
+      await _showAiResult(note, result, choice);
     } catch (e) {
       if (!mounted) return;
       Navigator.of(context).pop();
@@ -201,29 +236,193 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     }
   }
 
-  Future<void> _showAiResult(Note note, String result) async {
-    final String? choice = await showDialog<String>(
+  Future<String> _produce(
+      AiService ai, AiActionChoice choice, String source) async {
+    switch (choice.kind) {
+      case AiActionKind.summarize:
+        return ai.summarize(source);
+      case AiActionKind.keyPoints:
+        return ai.keyPoints(source);
+      case AiActionKind.continueWriting:
+        return ai.continueWriting(source);
+      case AiActionKind.fixGrammar:
+        return ai.fixGrammar(source);
+      case AiActionKind.shorten:
+        return ai.shorten(source);
+      case AiActionKind.expand:
+        return ai.expand(source);
+      case AiActionKind.tone:
+        return ai.changeTone(source, choice.param ?? 'friendly');
+      case AiActionKind.translate:
+        return ai.translate(source, choice.param ?? 'English');
+      default:
+        return ai.summarize(source);
+    }
+  }
+
+  String _aiTitleFor(AiActionChoice choice) {
+    switch (choice.kind) {
+      case AiActionKind.summarize:
+        return context.t('summarize');
+      case AiActionKind.keyPoints:
+        return context.t('keyPoints');
+      case AiActionKind.continueWriting:
+        return context.t('continueWriting');
+      case AiActionKind.fixGrammar:
+        return context.t('fixGrammar');
+      case AiActionKind.shorten:
+        return context.t('shorten');
+      case AiActionKind.expand:
+        return context.t('expand');
+      case AiActionKind.tone:
+        return '${context.t('tone')}: ${choice.param}';
+      case AiActionKind.translate:
+        return '${context.t('translate')}: ${choice.param}';
+      default:
+        return context.t('aiTools');
+    }
+  }
+
+  Future<void> _showAiResult(
+      Note note, String result, AiActionChoice choice) async {
+    final AiResultAction? action = await showAiResultSheet(
+      context,
+      title: _aiTitleFor(choice),
+      result: result,
+    );
+    if (action == null || !mounted) return;
+    switch (action) {
+      case AiResultAction.replace:
+        _bodyController.text = result;
+        await _save(note);
+        break;
+      case AiResultAction.append:
+        _bodyController.text =
+            '${_bodyController.text}\n\n$result'.trim();
+        await _save(note);
+        break;
+      case AiResultAction.copy:
+        await Clipboard.setData(ClipboardData(text: result));
+        if (mounted) context.showSnack(context.t('copied'));
+        break;
+      case AiResultAction.checklist:
+        await _createChecklistFromResult(note, result);
+        break;
+      case AiResultAction.newNote:
+        await _createNoteFromResult(result);
+        break;
+    }
+  }
+
+  Future<void> _applySuggestedTitle(Note note, String title) async {
+    final String clean = title.trim();
+    if (clean.isEmpty) return;
+    _titleController.text = clean;
+    await _save(note);
+    if (mounted) context.showSnack(context.t('aiTitleApplied'));
+  }
+
+  Future<void> _applySuggestedLabels(Note note, List<String> names) async {
+    final List<String> cleaned = names
+        .map((String n) => n.replaceFirst(RegExp(r'^[\-\*\d\.\)\s]+'), '').trim())
+        .where((String n) => n.isNotEmpty)
+        .toSet()
+        .toList();
+    if (cleaned.isEmpty) {
+      if (mounted) context.showSnack(context.t('aiNoText'));
+      return;
+    }
+    final Set<String> selected = cleaned.toSet();
+    final bool? ok = await showDialog<bool>(
       context: context,
-      builder: (BuildContext ctx) => AlertDialog(
-        title: Text(ctx.t('aiTools')),
-        content: SingleChildScrollView(child: Text(result)),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop('replace'),
-            child: Text(ctx.t('replace')),
+      builder: (BuildContext ctx) => StatefulBuilder(
+        builder: (BuildContext ctx, StateSetter setLocal) => AlertDialog(
+          title: Text(ctx.t('suggestLabels')),
+          content: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: cleaned
+                .map((String n) => FilterChip(
+                      label: Text(n),
+                      selected: selected.contains(n),
+                      onSelected: (bool v) => setLocal(() {
+                        if (v) {
+                          selected.add(n);
+                        } else {
+                          selected.remove(n);
+                        }
+                      }),
+                    ))
+                .toList(),
           ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop('append'),
-            child: Text(ctx.t('confirm')),
-          ),
-        ],
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(ctx.t('cancel')),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(ctx.t('confirm')),
+            ),
+          ],
+        ),
       ),
     );
-    if (choice == null) return;
-    final String existing = _bodyController.text;
-    _bodyController.text =
-        choice == 'replace' ? result : '$existing\n\n$result';
-    await _save(note);
+    if (ok != true || !mounted) return;
+
+    final LabelsProvider labels = context.read<LabelsProvider>();
+    final NotesProvider notes = context.read<NotesProvider>();
+    final List<String> labelIds = List<String>.of(notes.labelIdsFor(note.id));
+    for (final String name in selected) {
+      Label? found;
+      for (final Label l in labels.items) {
+        if (l.name.toLowerCase() == name.toLowerCase()) {
+          found = l;
+          break;
+        }
+      }
+      if (found != null) {
+        if (!labelIds.contains(found.id)) labelIds.add(found.id);
+      } else {
+        final Label created = await labels.create(name);
+        labelIds.add(created.id);
+      }
+    }
+    await notes.setLabels(note, labelIds);
+    if (mounted) {
+      setState(() {});
+      context.showSnack(context.t('aiLabelsApplied'));
+    }
+  }
+
+  Future<void> _createChecklistFromResult(Note note, String result) async {
+    final List<String> items = result
+        .split('\n')
+        .map((String s) =>
+            s.replaceFirst(RegExp(r'^[\-\*\d\.\)\s•]+'), '').trim())
+        .where((String s) => s.isNotEmpty)
+        .toList();
+    if (items.isEmpty) return;
+    final NotesProvider notes = context.read<NotesProvider>();
+    final Note created = await notes.create(type: NoteType.checklist, color: note.color);
+    created.title = note.displayTitle;
+    await notes.update(created);
+    final List<ChecklistItem> rows = <ChecklistItem>[
+      for (int i = 0; i < items.length; i++)
+        ChecklistItem(id: _uuid.v4(), noteId: created.id, text: items[i], position: i),
+    ];
+    await notes.saveChecklist(created.id, rows);
+    if (!mounted) return;
+    Navigator.of(context).pushNamed('/checklist', arguments: created.id);
+  }
+
+  Future<void> _createNoteFromResult(String result) async {
+    final NotesProvider notes = context.read<NotesProvider>();
+    final Note created = await notes.create(color: 0);
+    created.body = result;
+    await notes.update(created);
+    if (!mounted) return;
+    Navigator.of(context).pushReplacementNamed('/note', arguments: created.id);
   }
 
   Future<void> _openLink() async {
@@ -263,6 +462,11 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
         ),
         actions: <Widget>[
           IconButton(
+            tooltip: context.t('aiTools'),
+            icon: const Icon(Icons.auto_awesome_rounded),
+            onPressed: () => _openAiTools(note),
+          ),
+          IconButton(
             tooltip: context.t(note.isPinned ? 'unpin' : 'pin'),
             icon: Icon(note.isPinned
                 ? Icons.push_pin_rounded
@@ -276,24 +480,19 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
             icon: const Icon(Icons.more_vert_rounded),
             onSelected: (String value) async {
               switch (value) {
+                case 'ai':
+                  await _openAiTools(note);
+                  break;
                 case 'share':
                 case 'copy':
                 case 'export':
                 case 'delete':
                   await showNoteActionsSheet(context, note);
                   break;
-                case 'summarize':
-                case 'rewrite':
-                case 'checklist':
-                  await _runAi(note, value);
-                  break;
               }
             },
             itemBuilder: (BuildContext ctx) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(value: 'summarize', child: Text(ctx.t('summarize'))),
-              PopupMenuItem<String>(value: 'rewrite', child: Text(ctx.t('rewrite'))),
-              PopupMenuItem<String>(
-                  value: 'checklist', child: Text(ctx.t('generateChecklist'))),
+              PopupMenuItem<String>(value: 'ai', child: Text(ctx.t('aiTools'))),
               const PopupMenuDivider(),
               PopupMenuItem<String>(value: 'share', child: Text(ctx.t('share'))),
               PopupMenuItem<String>(value: 'copy', child: Text(ctx.t('copyText'))),

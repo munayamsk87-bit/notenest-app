@@ -13,6 +13,7 @@ import 'providers/notes_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/archive_screen.dart';
 import 'screens/about_screen.dart';
+import 'screens/ai_ask_screen.dart';
 import 'screens/ai_settings_screen.dart';
 import 'screens/backup_screen.dart';
 import 'screens/checklist_editor_screen.dart';
@@ -122,6 +123,11 @@ class _NoteNestAppState extends State<NoteNestApp> {
                 case '/image':
                   return MaterialPageRoute<void>(
                     builder: (_) => ImageNoteScreen(noteId: args as String),
+                    settings: routeSettings,
+                  );
+                case '/ai-ask':
+                  return MaterialPageRoute<void>(
+                    builder: (_) => AiAskScreen(noteId: args as String),
                     settings: routeSettings,
                   );
               }
