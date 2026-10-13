@@ -1,0 +1,74 @@
+name: notenest
+description: "NoteNest — Cute Smart Notes. Your little space for big ideas."
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State management
+  provider: ^6.1.2
+
+  # Local database
+  sqflite: ^2.3.3+1
+  path: ^1.9.0
+  path_provider: ^2.1.4
+
+  # Utilities
+  uuid: ^4.4.2
+  intl: ^0.19.0
+  shared_preferences: ^2.3.2
+
+  # Reminders / notifications
+  flutter_local_notifications: ^17.2.2
+  timezone: ^0.9.4
+  flutter_timezone: ^1.0.8
+
+  # Media & capture
+  image_picker: ^1.1.2
+  record: ^5.1.2
+  just_audio: ^0.9.40
+
+  # Sharing / files / links
+  share_plus: ^10.0.2
+  file_picker: ^8.1.2
+  url_launcher: ^6.3.0
+  archive: ^3.6.1
+
+  # Network (AI + optional cloud) & secure secrets
+  http: ^1.2.2
+  flutter_secure_storage: ^9.2.2
+
+  # On-device intelligence
+  google_mlkit_text_recognition: ^0.13.0
+  speech_to_text: ^7.0.0
+
+  # Device security
+  local_auth: ^2.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icon/
+    - assets/illustrations/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "assets/icon/app_icon.png"
+  adaptive_icon_background: "#FFF9F1"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  min_sdk_android: 23
