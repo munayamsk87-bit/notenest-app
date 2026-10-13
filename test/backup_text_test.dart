@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:notenest/core/constants/enums.dart';
 import 'package:notenest/data/models/checklist_item.dart';
 import 'package:notenest/data/models/label.dart';
 import 'package:notenest/data/models/note.dart';
@@ -7,7 +8,8 @@ import 'package:notenest/data/services/backup_service.dart';
 void main() {
   group('BackupService.noteAsText', () {
     test('renders a checklist note with tick boxes', () {
-      final Note note = Note(id: 'n1', title: 'Trip', body: '');
+      final Note note =
+          Note(id: 'n1', title: 'Trip', body: '', type: NoteType.checklist);
       final List<ChecklistItem> items = <ChecklistItem>[
         ChecklistItem(id: 'c1', noteId: 'n1', text: 'Passport', isDone: true),
         ChecklistItem(id: 'c2', noteId: 'n1', text: 'Charger', isDone: false),
