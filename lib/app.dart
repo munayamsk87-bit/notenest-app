@@ -13,6 +13,7 @@ import 'providers/notes_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/archive_screen.dart';
 import 'screens/about_screen.dart';
+import 'screens/ai_settings_screen.dart';
 import 'screens/backup_screen.dart';
 import 'screens/checklist_editor_screen.dart';
 import 'screens/drawing_screen.dart';
@@ -93,6 +94,7 @@ class _NoteNestAppState extends State<NoteNestApp> {
               '/backup': (_) => const BackupScreen(),
               '/about': (_) => const AboutScreen(),
               '/signin': (_) => const SignInScreen(),
+              '/ai': (_) => const AiSettingsScreen(),
             },
             onGenerateRoute: (RouteSettings routeSettings) {
               final Object? args = routeSettings.arguments;

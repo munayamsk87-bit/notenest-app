@@ -156,7 +156,14 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
   Future<void> _runAi(Note note, String action) async {
     final AiService ai = AiService.instance;
     if (!await ai.isConfigured) {
-      if (mounted) context.showSnack(context.t('aiNotConfigured'), error: true);
+      if (mounted) {
+        context.showSnack(
+          context.t('aiNotConfigured'),
+          error: true,
+          actionLabel: context.t('aiSettings'),
+          onAction: () => Navigator.of(context).pushNamed('/ai'),
+        );
+      }
       return;
     }
     final String source = '${_titleController.text}\n${_bodyController.text}'.trim();
@@ -185,7 +192,12 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     } catch (e) {
       if (!mounted) return;
       Navigator.of(context).pop();
-      context.showSnack('$e', error: true);
+      context.showSnack(
+        '$e',
+        error: true,
+        actionLabel: context.t('aiSettings'),
+        onAction: () => Navigator.of(context).pushNamed('/ai'),
+      );
     }
   }
 

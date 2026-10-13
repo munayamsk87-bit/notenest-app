@@ -23,8 +23,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final TextEditingController _aiKeyController = TextEditingController();
-  bool _aiKeyLoaded = false;
+  String _aiStatus = '';
 
   @override
   void initState() {
@@ -36,15 +35,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final String? key = await SettingsService.instance.aiApiKey();
     if (!mounted) return;
     setState(() {
-      _aiKeyController.text = key ?? '';
-      _aiKeyLoaded = true;
+      _aiStatus = (key != null && key.isNotEmpty)
+          ? context.t('aiKeySaved')
+          : context.t('aiNotSetUp');
     });
-  }
-
-  @override
-  void dispose() {
-    _aiKeyController.dispose();
-    super.dispose();
   }
 
   @override
@@ -189,36 +183,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
 
           _section(context.t('aiTools')),
-          if (_aiKeyLoaded)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-              child: TextField(
-                controller: _aiKeyController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: context.t('aiApiKey'),
-                  helperText: context.t('aiApiKeyHint'),
-                ),
-                onSubmitted: (String value) =>
-                    SettingsService.instance.setAiApiKey(value),
-              ),
-            ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      await SettingsService.instance
-                          .setAiApiKey(_aiKeyController.text);
-                      if (mounted) context.showSnack(context.t('saved'));
-                    },
-                    child: Text(context.t('save')),
-                  ),
-                ),
-              ],
-            ),
+          ListTile(
+            leading: const Icon(Icons.auto_awesome_rounded),
+            title: Text(context.t('aiSettings')),
+            subtitle: Text(_aiStatus),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () async {
+              await Navigator.of(context).pushNamed('/ai');
+              if (mounted) await _loadAiKey();
+            },
           ),
 
           _section(context.t('about')),
