@@ -191,7 +191,7 @@ class _AiAskScreenState extends State<AiAskScreen> {
     final Color bg = mine
         ? context.scheme.primary
         : context.scheme.primary.withOpacity(context.isDark ? 0.18 : 0.10);
-    final Color fg = mine ? Colors.white : null;
+    final Color? fg = mine ? Colors.white : null;
     return Align(
       alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
