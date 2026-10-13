@@ -46,8 +46,8 @@ class AppTheme {
           TargetPlatform.fuchsia: CutePageTransitionsBuilder(),
           TargetPlatform.linux: CutePageTransitionsBuilder(),
           TargetPlatform.windows: CutePageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CutePageTransitionsBuilder(),
+          TargetPlatform.macOS: CutePageTransitionsBuilder(),
         },
       ),
       appBarTheme: AppBarTheme(
