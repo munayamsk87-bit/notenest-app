@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/constants/app_info.dart';
 import '../core/l10n/context_ext.dart';
 import '../core/theme/app_colors.dart';
+import '../widgets/mascot.dart';
 
 /// About + privacy information (Spec §11, §12, §13 screen 17).
 class AboutScreen extends StatelessWidget {
@@ -19,15 +20,16 @@ class AboutScreen extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Container(
-                  width: 92,
-                  height: 92,
+                  width: 116,
+                  height: 116,
                   decoration: BoxDecoration(
                     color: context.isDark
                         ? AppColors.darkSurfaceAlt
                         : AppColors.lavender,
-                    borderRadius: BorderRadius.circular(26),
+                    borderRadius: BorderRadius.circular(34),
                   ),
-                  child: const Icon(Icons.auto_stories_rounded, size: 46),
+                  padding: const EdgeInsets.all(8),
+                  child: const Mascot(size: 100, bob: false),
                 ),
                 const SizedBox(height: 14),
                 Text(

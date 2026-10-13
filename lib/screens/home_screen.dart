@@ -6,6 +6,7 @@ import '../core/l10n/context_ext.dart';
 import '../widgets/animated_appear.dart';
 import '../widgets/bouncy_fab.dart';
 import '../widgets/floating_blobs.dart';
+import '../widgets/mascot.dart';
 import '../data/models/attachment.dart';
 import '../data/models/label.dart';
 import '../data/models/note.dart';
@@ -151,18 +152,25 @@ class _HomeScreenState extends State<HomeScreen> {
           ? _selectionAppBar(notes)
           : AppBar(
               titleSpacing: 16,
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(_greeting(context),
-                      style: Theme.of(context).textTheme.labelMedium),
-                  Text(
-                    context.t('appName'),
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleLarge
-                        ?.copyWith(fontWeight: FontWeight.w800),
+                  const MascotAvatar(size: 44),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(_greeting(context),
+                          style: Theme.of(context).textTheme.labelMedium),
+                      Text(
+                        context.t('appName'),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge
+                            ?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -257,6 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       hasScrollBody: false,
                       child: EmptyState(
                         icon: Icons.auto_stories_rounded,
+                        imageAsset: 'assets/mascot/mascot.png',
                         title: context.t('emptyTitle'),
                         body: context.t('emptyBody'),
                         actionLabel: context.t('createFirstNote'),

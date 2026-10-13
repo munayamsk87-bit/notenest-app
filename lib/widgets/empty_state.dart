@@ -15,6 +15,7 @@ class EmptyState extends StatefulWidget {
     this.actionLabel,
     this.onAction,
     this.actionIcon = Icons.add_rounded,
+    this.imageAsset,
   });
 
   final IconData icon;
@@ -23,6 +24,7 @@ class EmptyState extends StatefulWidget {
   final String? actionLabel;
   final VoidCallback? onAction;
   final IconData actionIcon;
+  final String? imageAsset;
 
   @override
   State<EmptyState> createState() => _EmptyStateState();
@@ -67,29 +69,36 @@ class _EmptyStateState extends State<EmptyState>
                       ),
                     );
                   },
-                  child: Container(
-                    width: 122,
-                    height: 122,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: isDark
-                            ? <Color>[AppColors.darkSurfaceAlt, AppColors.darkSurface]
-                            : <Color>[AppColors.lavender, AppColors.softPink],
-                      ),
-                      borderRadius: BorderRadius.circular(38),
-                      boxShadow: <BoxShadow>[
-                        if (!isDark)
-                          BoxShadow(
-                            color: scheme.primary.withOpacity(0.18),
-                            blurRadius: 22,
-                            offset: const Offset(0, 12),
+                  child: widget.imageAsset != null
+                      ? Image.asset(
+                          widget.imageAsset!,
+                          width: 178,
+                          height: 178,
+                          fit: BoxFit.contain,
+                        )
+                      : Container(
+                          width: 122,
+                          height: 122,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: isDark
+                                  ? <Color>[AppColors.darkSurfaceAlt, AppColors.darkSurface]
+                                  : <Color>[AppColors.lavender, AppColors.softPink],
+                            ),
+                            borderRadius: BorderRadius.circular(38),
+                            boxShadow: <BoxShadow>[
+                              if (!isDark)
+                                BoxShadow(
+                                  color: scheme.primary.withOpacity(0.18),
+                                  blurRadius: 22,
+                                  offset: const Offset(0, 12),
+                                ),
+                            ],
                           ),
-                      ],
-                    ),
-                    child: Icon(widget.icon, size: 56, color: scheme.primary),
-                  ),
+                          child: Icon(widget.icon, size: 56, color: scheme.primary),
+                        ),
                 ),
                 const SizedBox(height: 24),
                 Text(

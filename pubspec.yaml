@@ -1,7 +1,7 @@
 name: notenest
 description: "NoteNest — Cute Smart Notes. Your little space for big ideas."
 publish_to: "none"
-version: 1.1.0+2
+version: 1.2.0+3
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -63,6 +63,7 @@ flutter:
   assets:
     - assets/icon/
     - assets/illustrations/
+    - assets/mascot/
 
 flutter_launcher_icons:
   android: "launcher_icon"
