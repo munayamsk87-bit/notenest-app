@@ -26,7 +26,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.notenest.notes"
-    compileSdk = 34
+    compileSdk = 35
 
     compileOptions {
         coreLibraryDesugaringEnabled true
